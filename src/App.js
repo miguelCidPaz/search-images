@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import Header from "./components/Header"
+import { useState } from 'react'
+import Gallery from "./components/Gallery"
+import ApiKey from './keys/ApiKey'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const App = () => {
+    const [photos, setPhotos] = useState([])
+
+    const setNewUrl = async (str) => {
+        const response = await fetch(`https://api.unsplash.com/search/photos?per_page=20&&query=${str}`, {
+            headers: {
+                'Authorization': `Client-ID ${ApiKey}`
+            }
+        })
+        const data = await response.json()
+        setPhotos(data.results)
+    }
+
+    return (
+        <>
+            <Header setNewUrl={setNewUrl} />
+            {photos.length > 1 ? <Gallery imgs={photos} /> : null}
+        </>
+    )
 }
 
-export default App;
+export default App
